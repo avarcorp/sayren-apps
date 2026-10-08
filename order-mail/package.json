@@ -1,0 +1,18 @@
+{
+  "name": "order-mail",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "sayren app dev",
+    "verify": "sayren app verify",
+    "deploy": "sayren app deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sayren/app": "^0.8.0"
+  },
+  "devDependencies": {
+    "sayren": "^0.8.1",
+    "typescript": "^5.9.0"
+  }
+}

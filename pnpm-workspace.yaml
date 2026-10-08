@@ -1,0 +1,9 @@
+# 상위 모노레포의 pnpm이 이 폴더의 앱을 자기 워크스페이스로 잡지 않게 끊는 경계입니다.
+# 앱마다 독립 프로젝트입니다. 잠금 파일·node_modules를 앱 폴더에 두고, 앱 폴더에서 설치합니다.
+packages:
+  - "**"
+  - "!**/node_modules/**"
+  - "!**/dist/**"
+sharedWorkspaceLockfile: false
+recursiveInstall: false
+linkWorkspacePackages: false

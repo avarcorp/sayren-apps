@@ -1,0 +1,35 @@
+{
+  "handle": "order-mail",
+  "name": "주문 메일 알림",
+  "description": "결제된 주문을 Resend로 메일 알림합니다",
+  "icon": "icon.svg",
+  "readme": "README.md",
+  "scopes": [
+    "order:r"
+  ],
+  "network": {
+    "hosts": [
+      "api.resend.com"
+    ]
+  },
+  "events": [
+    "ORDER.PAID"
+  ],
+  "settings": {
+    "to": {
+      "type": "string",
+      "label": "받는 주소",
+      "description": "결제 알림을 받을 메일 주소",
+      "required": true
+    },
+    "from": {
+      "type": "string",
+      "label": "보내는 주소",
+      "description": "Resend에서 검증한 도메인의 주소. 예: 알림 <noreply@example.com>",
+      "required": true
+    }
+  },
+  "secrets": [
+    "RESEND_API_KEY"
+  ]
+}

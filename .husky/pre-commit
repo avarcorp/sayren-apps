@@ -1,0 +1,3 @@
+# 커밋하는 파일에 biome check --write — 고친 내용을 다시 스테이징한다. 고칠 수 없는 오류가 남으면 커밋을 멈춘다
+pnpm -s exec biome check --write --staged --no-errors-on-unmatched --files-ignore-unknown=true
+git update-index --again

@@ -4,17 +4,11 @@
   "description": "결제된 주문을 Resend로 메일 알림합니다",
   "icon": "icon.svg",
   "readme": "README.md",
-  "scopes": [
-    "order:r"
-  ],
+  "scopes": ["order:r"],
   "network": {
-    "hosts": [
-      "api.resend.com"
-    ]
+    "hosts": ["api.resend.com"]
   },
-  "events": [
-    "ORDER.PAID"
-  ],
+  "events": ["ORDER.PAID"],
   "settings": {
     "to": {
       "type": "string",
@@ -29,7 +23,5 @@
       "required": true
     }
   },
-  "secrets": [
-    "RESEND_API_KEY"
-  ]
+  "secrets": ["RESEND_API_KEY"]
 }

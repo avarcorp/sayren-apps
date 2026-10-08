@@ -1,0 +1,16 @@
+{
+  "name": "sayren-apps",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "biome check --write",
+    "check:ci": "biome ci --error-on-warnings",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "husky": "^9.1.7"
+  }
+}

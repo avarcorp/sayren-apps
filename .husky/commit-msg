@@ -1,0 +1,2 @@
+# 커밋 메시지 검사 — commitlint.config.mjs(type(scope): 제목, 헤더 100자)
+pnpm -s exec commitlint --edit "$1"

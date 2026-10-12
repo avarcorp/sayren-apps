@@ -45,14 +45,14 @@ sayren 서드파티 앱 예제(`order-mail`)입니다. 아래는 이 앱을 직�
 
 ```bash
 npm install
-npx sayren login                                  # 또는 SAYREN_APP_KEY=sak_… (developer.sayren.app › 앱 › 배포 키)
+npx sayren login                                  # 또는 SAYREN_APP_KEY=sak_… (developer.sayren.io › 앱 › 배포 키)
 npx sayren app deploy -m "첫 버전"                # 비밀 값 이름은 올린 버전의 매니페스트로 확인하므로 배포가 먼저입니다
 printf '%s' "$RESEND_API_KEY" | npx sayren app secret put RESEND_API_KEY
 npx sayren app release 1
 ```
 
-[developer.sayren.app](https://developer.sayren.app)에서 **내 상점에 설치**를 누르고 상점을 고른 뒤, 상점 플랫폼 **앱 › 주문 메일 알림 › 설정**에
-받는 주소·보내는 주소를 채웁니다. 자세한 순서는 [앱 만들기 매뉴얼](https://docs.sayren.app/guides/apps-getting-started)을 참고하십시오.
+[developer.sayren.io](https://developer.sayren.io)에서 **내 상점에 설치**를 누르고 상점을 고른 뒤, 상점 플랫폼 **앱 › 주문 메일 알림 › 설정**에
+받는 주소·보내는 주소를 채웁니다. 자세한 순서는 [앱 만들기 매뉴얼](https://docs.sayren.io/guides/apps-getting-started)을 참고하십시오.
 
 ## 개발자용 — 로컬 실행
 

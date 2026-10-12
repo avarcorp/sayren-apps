@@ -1,6 +1,6 @@
 # sayren-apps
 
-sayren 팀이 만들고 운영하는 [sayren](https://sayren.app) 서드파티 앱입니다. 앱 하나가 폴더 하나이고, 폴더마다 매니페스트(`manifest.json`)·코드·목록 정보를 둡니다.
+sayren 팀이 만들고 운영하는 [sayren](https://sayren.io) 서드파티 앱입니다. 앱 하나가 폴더 하나이고, 폴더마다 매니페스트(`manifest.json`)·코드·목록 정보를 둡니다.
 
 | 앱 | 설명 |
 | --- | --- |
@@ -22,4 +22,4 @@ order-mail/
 
 레포 루트에서 `pnpm install`하면 커밋 훅이 설치됩니다. 커밋할 때 바뀐 파일에 `biome check --write`가 돌고, 커밋 메시지는 `type(scope): 제목` 형식(scope는 앱 handle)이어야 합니다. 레포 전체 검사는 `pnpm check`입니다.
 
-앱마다 독립 프로젝트입니다. 앱 폴더에서 `pnpm install`하고 `npx sayren app …` 명령을 실행합니다. 만드는 방법은 [앱 만들기 매뉴얼](https://docs.sayren.app/guides/apps-getting-started)을 참고하십시오.
+앱마다 독립 프로젝트입니다. 앱 폴더에서 `pnpm install`하고 `npx sayren app …` 명령을 실행합니다. 만드는 방법은 [앱 만들기 매뉴얼](https://docs.sayren.io/guides/apps-getting-started)을 참고하십시오.

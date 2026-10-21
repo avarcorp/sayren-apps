@@ -1,0 +1,148 @@
+{
+  "handle": "nhn-kakao-alimtalk",
+  "name": "NHN Cloud 카카오 알림톡",
+  "description": "주문 흐름의 어느 단계에서든 매개변수로 연결한 값으로 NHN Cloud 카카오 알림톡을 보냅니다",
+  "icon": "icon.svg",
+  "readme": "README.md",
+  "scopes": ["order:r"],
+  "network": {
+    "hosts": ["kakaotalk-bizmessage.api.nhncloudservice.com"]
+  },
+  "flow": {
+    "notifications": {
+      "send": {
+        "label": "알림톡 보내기",
+        "description": "템플릿 코드·받는 사람·치환 변수를 매개변수로 연결해 알림톡을 보냅니다",
+        "params": {
+          "templateCode": {
+            "type": "string",
+            "label": "템플릿 코드",
+            "required": true
+          },
+          "recipient": {
+            "type": "string",
+            "label": "받는 사람(orderer 주문자·receiver 수령인)"
+          },
+          "recipientNo": {
+            "type": "string",
+            "label": "받는 번호(직접 지정)"
+          },
+          "name1": {
+            "type": "string",
+            "label": "변수 1 이름"
+          },
+          "value1": {
+            "type": "string",
+            "label": "변수 1 값"
+          },
+          "name2": {
+            "type": "string",
+            "label": "변수 2 이름"
+          },
+          "value2": {
+            "type": "string",
+            "label": "변수 2 값"
+          },
+          "name3": {
+            "type": "string",
+            "label": "변수 3 이름"
+          },
+          "value3": {
+            "type": "string",
+            "label": "변수 3 값"
+          },
+          "name4": {
+            "type": "string",
+            "label": "변수 4 이름"
+          },
+          "value4": {
+            "type": "string",
+            "label": "변수 4 값"
+          },
+          "name5": {
+            "type": "string",
+            "label": "변수 5 이름"
+          },
+          "value5": {
+            "type": "string",
+            "label": "변수 5 값"
+          },
+          "name6": {
+            "type": "string",
+            "label": "변수 6 이름"
+          },
+          "value6": {
+            "type": "string",
+            "label": "변수 6 값"
+          },
+          "name7": {
+            "type": "string",
+            "label": "변수 7 이름"
+          },
+          "value7": {
+            "type": "string",
+            "label": "변수 7 값"
+          },
+          "name8": {
+            "type": "string",
+            "label": "변수 8 이름"
+          },
+          "value8": {
+            "type": "string",
+            "label": "변수 8 값"
+          }
+        }
+      }
+    }
+  },
+  "settings": {
+    "appKey": {
+      "type": "string",
+      "label": "앱키",
+      "description": "NHN Cloud 콘솔 › KakaoTalk Bizmessage › URL & Appkey의 Appkey",
+      "required": true
+    },
+    "secretKey": {
+      "type": "string",
+      "label": "시크릿 키",
+      "description": "NHN Cloud 콘솔 › KakaoTalk Bizmessage › URL & Appkey의 SecretKey",
+      "required": true,
+      "secret": true
+    },
+    "senderKey": {
+      "type": "string",
+      "label": "발신 키",
+      "description": "카카오톡 채널 발신 프로필의 발신 키(40자)",
+      "required": true
+    },
+    "resend": {
+      "type": "select",
+      "label": "SMS 대체 발송",
+      "description": "알림톡 실패 시 문자 대체 발송. 「템플릿 설정 따름」은 NHN Cloud 콘솔의 템플릿 설정대로 보냅니다",
+      "options": [
+        {
+          "value": "template",
+          "label": "템플릿 설정 따름"
+        },
+        {
+          "value": "off",
+          "label": "끔"
+        },
+        {
+          "value": "SMS",
+          "label": "SMS"
+        },
+        {
+          "value": "LMS",
+          "label": "LMS"
+        }
+      ],
+      "default": "template"
+    },
+    "resendSendNo": {
+      "type": "string",
+      "label": "대체 발송 발신번호",
+      "description": "NHN Cloud SMS 서비스에 등록한 발신번호. 비우면 템플릿 설정을 따릅니다"
+    }
+  }
+}

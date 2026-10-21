@@ -5,6 +5,7 @@ sayren 팀이 만들고 운영하는 [sayren](https://sayren.io) 서드파티 �
 | 앱 | 설명 |
 | --- | --- |
 | [order-mail](order-mail) | 결제된 주문을 Resend로 메일 알림합니다 |
+| [nhn-kakao-alimtalk](nhn-kakao-alimtalk) | 주문 흐름의 어느 단계에서든 매개변수로 연결한 값으로 NHN Cloud 카카오 알림톡을 보냅니다 |
 
 ## 앱 폴더
 

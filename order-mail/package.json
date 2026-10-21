@@ -6,13 +6,15 @@
     "dev": "sayren app dev",
     "verify": "sayren app verify",
     "deploy": "sayren app deploy",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@sayren/app": "^0.8.0"
   },
   "devDependencies": {
     "sayren": "^0.8.1",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.5"
   }
 }

@@ -1,6 +1,6 @@
 # NHN Cloud 카카오 알림톡
 
-주문 흐름의 어느 단계에든 끼워 넣는 알림 블록입니다. 흐름 편집기에서 알림 채널 「앱 › NHN Cloud 카카오 알림톡 › 알림톡 보내기」를 고르고, 템플릿 코드·받는 사람·치환 변수를 매개변수로 연결하면 그 단계가 지나갈 때 [NHN Cloud KakaoTalk Bizmessage](https://www.nhncloud.com/kr/service/notification/kakaotalk-bizmessage)로 알림톡이 나갑니다. 앱이 스스로 채우는 값은 없습니다. 무엇을 보낼지는 전부 흐름에서 정합니다.
+주문 흐름의 어느 단계에든 끼워 넣는 알림 블록입니다. 흐름 편집기에서 알림 채널 「앱 › NHN Cloud 카카오 알림톡 › 알림톡 보내기」를 고르고, 템플릿 코드·받는 번호·치환 변수를 매개변수로 연결하면 그 단계가 지나갈 때 [NHN Cloud KakaoTalk Bizmessage](https://www.nhncloud.com/kr/service/notification/kakaotalk-bizmessage)로 알림톡이 나갑니다. 앱이 스스로 채우는 값은 없습니다. 무엇을 보낼지는 전부 흐름에서 정합니다.
 
 ## 준비
 
@@ -26,10 +26,11 @@
 | 매개변수 | 넣는 값 | 예 |
 | --- | --- | --- |
 | 템플릿 코드 | 승인된 템플릿 코드(필수) | `"ORDER_READY"` |
-| 받는 사람 | `"orderer"`(주문자, 기본) 또는 `"receiver"`(배송지 수령인). 앱이 주문의 연락처를 읽습니다 | `"receiver"` |
-| 받는 번호(직접 지정) | 번호를 식으로 직접 넣을 때. 받는 사람보다 우선합니다 | `item.inputs.guardianPhone` |
-| 변수 n 이름 | 템플릿 치환 변수 이름 | `"픽업시각"` |
-| 변수 n 값 | 그 변수에 넣을 값 | `string(item.fields.readyAt)` |
+| 받는 번호 | 받을 연락처 식(필수). 주문자는 `buyer.phone`, 배송지 수령인은 `shipping.phone`입니다 | `shipping.phone` |
+| 변수 n 이름 | 템플릿 치환 변수 이름 | `"고객명"` |
+| 변수 n 값 | 그 변수에 넣을 값 | `buyer.name` |
+
+자주 쓰는 값은 `order.no`(주문번호), `item.productName`(상품명), `item.optionName`(옵션명), `buyer.name`(주문자), `shipping.receiverName`(수령인)입니다. 배송 없는 주문은 `shipping.*`의 이름·연락처가 주문자이고 주소가 빈 문자열입니다. 전체 목록은 [주문 흐름 › 식이 읽는 값](https://docs.sayren.io/guides/order-flows#식이-읽는-값)에 있습니다.
 
 - 변수 쌍은 8개까지입니다. 이름을 비운 쌍은 보내지 않고, 값을 비운 쌍은 빈 문자열로 보냅니다.
 - 값은 문자열이어야 하므로 숫자·일시는 `string(...)`으로 바꿉니다.
@@ -39,7 +40,7 @@
 
 - NHN Cloud가 요청을 거절하면(앱키·시크릿 키 오류, 템플릿 없음, 변수 누락 등) 실행이 실패로 남고 다시 시도합니다. 같은 호출의 재시도는 NHN Cloud 중복 방지 키로 두 번 보내지 않습니다.
 - 수신자 결과 실패(전화번호 오류, 카카오톡 미사용, 수신 차단 등)는 요청이 접수된 뒤의 결과라 다시 보내지 않고 실행 기록에 경고로 남깁니다. 「발송했으나 수신 미확인」(3일 안에 수신될 수 있음)은 보낸 것으로 기록합니다.
-- 받는 사람 값이 `"orderer"`·`"receiver"`가 아니거나 대체 발송 설정 값이 올바르지 않으면 보내지 않고 실패로 남깁니다. 잘못 연결한 알림이 조용히 주문자에게 가지 않게 하기 위해서입니다.
+- 받는 번호가 비어 있거나 대체 발송 설정 값이 올바르지 않으면 보내지 않고 실패로 남깁니다.
 
 ## 앱 정보
 
@@ -48,9 +49,9 @@ sayren 서드파티 앱(`nhn-kakao-alimtalk`)입니다. 아래는 이 앱을 직
 | 항목 | 값 |
 | --- | --- |
 | handle | `nhn-kakao-alimtalk` |
-| 권한 | `order:r`(받는 사람이 주문자·수령인일 때 연락처) |
+| 권한 | 없음(받는 번호·변수는 흐름 식 값) |
 | 외부 호스트 | `kakaotalk-bizmessage.api.nhncloudservice.com` |
-| 흐름 알림 | `send`(알림톡 보내기) — `templateCode`(필수), `recipient`, `recipientNo`, `name1`·`value1` … `name8`·`value8` |
+| 흐름 알림 | `send`(알림톡 보내기) — `templateCode`(필수), `recipientNo`(필수), `name1`·`value1` … `name8`·`value8` |
 | 설정 | `appKey`(필수), `secretKey`(필수, 비밀), `senderKey`(필수), `resend`(select), `resendSendNo` |
 | 비밀 값 | 없음(모두 셀러 설정) |
 | 목록 정보 | `icon.svg`, 이 README |

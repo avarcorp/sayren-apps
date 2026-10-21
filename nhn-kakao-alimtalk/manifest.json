@@ -4,7 +4,7 @@
   "description": "주문 흐름의 어느 단계에서든 매개변수로 연결한 값으로 NHN Cloud 카카오 알림톡을 보냅니다",
   "icon": "icon.svg",
   "readme": "README.md",
-  "scopes": ["order:r"],
+  "scopes": [],
   "network": {
     "hosts": ["kakaotalk-bizmessage.api.nhncloudservice.com"]
   },
@@ -12,20 +12,17 @@
     "notifications": {
       "send": {
         "label": "알림톡 보내기",
-        "description": "템플릿 코드·받는 사람·치환 변수를 매개변수로 연결해 알림톡을 보냅니다",
+        "description": "템플릿 코드·받는 번호·치환 변수를 매개변수로 연결해 알림톡을 보냅니다",
         "params": {
           "templateCode": {
             "type": "string",
             "label": "템플릿 코드",
             "required": true
           },
-          "recipient": {
-            "type": "string",
-            "label": "받는 사람(orderer 주문자·receiver 수령인)"
-          },
           "recipientNo": {
             "type": "string",
-            "label": "받는 번호(직접 지정)"
+            "label": "받는 번호(buyer.phone 주문자·shipping.phone 수령인)",
+            "required": true
           },
           "name1": {
             "type": "string",

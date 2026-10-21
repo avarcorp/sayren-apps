@@ -2,8 +2,8 @@ import { type AppContext, defineApp } from "@sayren/app";
 
 /**
  * NHN Cloud 카카오 알림톡 — 주문 흐름의 어느 단계에든 끼워 넣는 알림 블록 하나(`send`)다.
- * 받을 것은 전부 셀러가 흐름 편집기에서 매개변수로 연결한다. 템플릿 코드, 받는 사람(주문자·수령인 또는 번호 식), 치환 변수(이름·값 쌍).
- * 앱이 스스로 채우는 값은 없다. 흐름 식에는 연락처가 없어 받는 사람이 주문자·수령인이면 `order:r`로 주문의 연락처만 읽는다.
+ * 받을 것은 전부 셀러가 흐름 편집기에서 매개변수로 연결한다. 템플릿 코드, 받는 번호(`buyer.phone`·`shipping.phone` 등 식), 치환 변수(이름·값 쌍).
+ * 앱이 스스로 채우거나 주문을 다시 읽는 값은 없다(권한 없음). 주문자·수령인 연락처는 흐름 식 값이다(sayren #143).
  * 앱키·시크릿 키·발신 키·대체 발송은 셀러가 상점 플랫폼 앱 설정에서 채운다(모두 셀러의 NHN Cloud 프로젝트 값).
  */
 export const ALIMTALK_API = "https://kakaotalk-bizmessage.api.nhncloudservice.com";
@@ -68,27 +68,6 @@ export function resendParameterOf(
   };
 }
 
-/**
- * 받는 번호 — `recipientNo`(식으로 직접 지정)가 있으면 그것, 없으면 `recipient`(`orderer` 기본·`receiver`)에 따라 주문의 연락처다.
- * 주문은 이때만 읽는다. 숫자로 온 번호도 받고, 모르는 `recipient` 값은 잘못 연결된 것이라 실패시킨다(조용히 주문자에게 보내지 않는다)
- */
-export async function recipientOf(
-  params: Record<string, unknown>,
-  orderId: string,
-  ctx: Pick<AppContext, "api">,
-): Promise<string> {
-  const direct = params.recipientNo;
-  if (direct != null && String(direct).trim()) return recipientNoOf(String(direct));
-  const recipient = params.recipient ?? "orderer";
-  if (recipient !== "orderer" && recipient !== "receiver") {
-    throw new Error(`매개변수 recipient는 "orderer" 또는 "receiver"입니다: ${String(recipient)}`);
-  }
-  const order = await ctx.api.orders.get(orderId);
-  return recipientNoOf(
-    recipient === "receiver" ? order.shippingAddress.phone : order.orderer.phone,
-  );
-}
-
 export default defineApp({
   flows: {
     send: async (notice, ctx) => {
@@ -103,8 +82,10 @@ export default defineApp({
         throw new Error("매개변수 templateCode가 비어 있습니다");
       }
       const resendParameter = resendParameterOf(ctx);
-      const recipientNo = await recipientOf(notice.params, notice.orderId, ctx);
-      if (!recipientNo) throw new Error("받는 번호가 없습니다");
+      // 받는 번호는 셀러가 식으로 연결한다(`buyer.phone` 주문자, `shipping.phone` 수령인). 비면 보내지 않고 실패로 남긴다
+      const direct = notice.params.recipientNo;
+      const recipientNo = direct == null ? "" : recipientNoOf(String(direct));
+      if (!recipientNo) throw new Error("매개변수 recipientNo(받는 번호)가 비어 있습니다");
 
       const response = await fetch(
         `${ALIMTALK_API}/alimtalk/v2.3/appkeys/${encodeURIComponent(appKey)}/messages`,

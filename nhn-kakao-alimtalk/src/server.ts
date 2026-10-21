@@ -14,6 +14,12 @@ const RESULT_SUCCESS = 1000;
 const RESULT_UNCONFIRMED = 3005;
 /** API 응답 코드 — 같은 `X-NC-API-IDEMPOTENCY-KEY`를 10분 안에 다시 씀(이미 보낸 호출의 재시도) */
 const RESULT_DUPLICATE_KEY = -1005;
+/**
+ * 보낸 호출 표시(`ctx.storage`) — NHN은 실패한 요청의 멱등 키도 10분 동안 잡아 둬, 재시도가 -1005만으로는 앞선 시도가 보냈는지 알 수 없다.
+ * 보낸 뒤에만 이 표시를 남기고 -1005는 표시가 있을 때만 성공으로 본다. 멱등 창(10분)이 지난 표시는 지운다(설치당 키 1,000개 한도)
+ */
+const SENT_PREFIX = "sent:";
+const SENT_KEEP_MS = 15 * 60_000;
 /** NHN 응답을 기다리는 상한 — 실행 환경 한도(30초)보다 짧게 둬 결과를 모르는 채 끊기지 않게 한다 */
 const FETCH_TIMEOUT_MS = 20_000;
 /** 매니페스트 `settings.resend.options` */
@@ -68,6 +74,29 @@ export function resendParameterOf(
   };
 }
 
+/** 표시 키 `sent:{보낸 시각 ms}:{invocationId}` — 목록 한 번으로 찾고 지운다(저장소 호출은 관리 API 한도에 센다) */
+async function sentKeys(ctx: Pick<AppContext, "storage">): Promise<string[]> {
+  return ctx.storage.list({ prefix: SENT_PREFIX });
+}
+
+async function wasSent(ctx: Pick<AppContext, "storage" | "invocationId">): Promise<boolean> {
+  return (await sentKeys(ctx)).some((key) => key.endsWith(`:${ctx.invocationId}`));
+}
+
+/** 보낸 호출을 표시하고 멱등 창이 지난 표시를 지운다. 실패해도 발송 결과는 바꾸지 않는다(이미 보냈다) */
+async function markSent(ctx: Pick<AppContext, "storage" | "invocationId" | "log">): Promise<void> {
+  try {
+    const now = Date.now();
+    for (const key of await sentKeys(ctx)) {
+      const at = Number(key.slice(SENT_PREFIX.length).split(":")[0]);
+      if (!(now - at <= SENT_KEEP_MS)) await ctx.storage.delete(key);
+    }
+    await ctx.storage.set(`${SENT_PREFIX}${now}:${ctx.invocationId}`, true);
+  } catch (error) {
+    ctx.log.warn("보낸 호출 표시 실패", String(error));
+  }
+}
+
 export default defineApp({
   flows: {
     send: async (notice, ctx) => {
@@ -117,13 +146,19 @@ export default defineApp({
       }
       const body = (await response.json()) as SendResponse;
       if (!body.header.isSuccessful) {
-        // 같은 호출의 재시도 — 앞선 시도가 이미 접수됐다. 실패로 두면 재시도가 이어지다 앱이 정지된다
+        // 같은 호출의 재시도 — 앞선 시도가 보냈다고 남긴 경우만 성공이다. 앞선 시도가 실패했어도 NHN은 같은 코드로 답한다
         if (body.header.resultCode === RESULT_DUPLICATE_KEY) {
-          ctx.log.info("알림톡 이미 보냄(재시도)", notice.state, templateCode);
-          return;
+          if (await wasSent(ctx)) {
+            ctx.log.info("알림톡 이미 보냄(재시도)", notice.state, templateCode);
+            return;
+          }
+          throw new Error(
+            "NHN Cloud -1005: 앞선 요청이 보내지지 않았습니다. 멱등 키가 풀리는 10분 뒤 재시도에서 다시 보냅니다",
+          );
         }
         throw new Error(`NHN Cloud ${body.header.resultCode}: ${body.header.resultMessage}`);
       }
+      await markSent(ctx);
       const result = body.message?.sendResults?.[0];
       const requestId = body.message?.requestId ?? "";
       if (result?.resultCode === RESULT_UNCONFIRMED) {
